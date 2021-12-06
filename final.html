@@ -41,18 +41,53 @@ svg {
   text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
   cursor: move;
 }
+table{
+  border-collapse: collapse;
+}
+
+table th {
+  text-align: left;
+  background-color: #d41f37;
+  color: #000;
+  padding: 4px 30px 4px 8px;
+}
+
+table td {
+  border: 1px solid #efefef;
+  padding: 4px 8px;
+}
+
+table tr:nth-child(even) td{
+  background-color: #d41f37c2;
+}
 
 </style>
 </head>
 <body>
   <div id="scatterArea"></div>
   <div id="parallelArea"></div>
+  <button type="button" onclick=populateTable()>Click Me!</button>
+  <button type="button" onclick=resetTable()>Reset!</button>
+  <div class='tableArea'>
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Age</th>
+          <th>Sex</th>
+          <th>Angina</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      </tbody>  
+    </table>
+  </div>
+
   <script src="d3.js"></script>
-  <script src="./multibrush.js"></script>
   <script>
 
     var chiavi
-
+    var selezionato = false;
     var dataSelection=[];
 
     var margin = {top: 20, right: 20, bottom: 110, left: 50},
@@ -86,6 +121,7 @@ svg {
 
     var color= d3.scaleOrdinal(d3.schemeCategory10);
 
+    
     /////////////////////////////////////////// START SCATTER  ///////////////////////////////////////////
 
     function drawScatter(data){
@@ -296,16 +332,6 @@ svg {
         .selectAll("rect")
         .attr("x", -8)
         .attr("width", 16);
-      
-      // Done to allow multiple brushing  
-      // g.append("svg:g")
-      //   .attr("class", "brush")
-      //   .each(function(d) {
-      //   d3.select(this).call(y[d].brush = d3.brush.multibrush()
-      //     .extentAdaption(resizeExtent)
-      //     .y(y[d]).on("brush", brush));
-      //   })
-      //   .selectAll("rect").call(resizeExtent);
 
       function resizeExtent(selection){
         selection
@@ -386,7 +412,22 @@ svg {
 
       function brush_end(){
         if (!d3.event.sourceEvent) return; // Only transition after input.
-        if (!d3.event.selection) return; // Ignore empty selections.
+        
+        
+        if (!d3.event.selection){             // what to do on deselection (empty selection)
+          reset_dot();
+          console.log("reset sotto");
+          resetTable();
+          selezionato = false;
+          return;
+        }        
+        console.log("selezione sotto");
+          
+        selezionato = true;
+        reset_dot();                          // what to do after a selection
+        identifica_e_colora_quelli_sopra(); 
+        resetTable();
+        populateTable();   
         for(var i=0;i<dimensions.length;++i){
           if(d3.event.target==y[dimensions[i]].brush) {
             extents[i]=d3.event.selection.map(y[dimensions[i]].invert,y[dimensions[i]]);
@@ -395,9 +436,8 @@ svg {
             d3.select(this).transition().call(d3.event.target.move, extents[i].map(y[dimensions[i]]));
           }
         }
-        identifica_e_colora_quelli_sopra();    //codice da eseguire dopo aver fatto il brush
       }
-
+      
     }
 
     /////////////////////////////////////////// END PARALLEL  ///////////////////////////////////////////
@@ -440,91 +480,155 @@ svg {
       var selection= d3.event.selection;
       
       //modify scatter according to selection on it
-      if (selection != null){         
+      
+      
+      if (selection != null && selezionato){        // unione delle selection  
+        focus.selectAll(".dot")
+          .style("opacity",function(d){
+          if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1]) && selezionato_sotto(d.id)) {
+            dataSelection.push(d.id)
+            return "1"
+          }
+          else{
+            return "0.3"
+          }
+          
+        })
+        
+      }
+      else if (selection != null && !selezionato){    //selezione solo sopra
         focus.selectAll(".dot")
           .style("opacity",function(d){
           if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1])) {
             dataSelection.push(d.id)
-            console.log(d[chiavi[2]])   //stampo età dati selezionati
+            //console.log(d.id)
             return "1"
           }
           else
           {
             return "0.3"
           }
+          
+          
         })
-        
-        
+        console.log("selezione");
+        resetTable();
+        populateTable();
       }
       else
       {
-        focus.selectAll(".dot")
-          .style("fill",function(d) {return color(d[chiavi[13]]); })
-          .style("opacity",".3")
         console.log("reset");
+        resetTable();
+        identifica_e_colora_quelli_sopra();
+        
       }
       
       //modify parallel according to selection on scatter
       d3.select("#parallelArea").selectAll(".forepath")
         .style("stroke","#d41f37")
+
+      if (selection != null){
+        var c=d3.select("#parallelArea").selectAll(".forepath")
+          .style("stroke",function(d){
+            if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1])) {
+              dataSelection.push(d.id)
+              return "#d41f37"
+            }
+            else
+            {
+              return "none"
+            }
+          })
+      //console.log(c)
+      }
       
-      var c=d3.select("#parallelArea").selectAll(".forepath")
-        .style("stroke",function(d){
-          if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1])) {
-            dataSelection.push(d.id)
-            return "#d41f37"
-          }
-          else
-          {
-            return "none"
-          }
-        })
-        /*.style("stroke-width",function(d){
-          if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1])) {
-            dataSelection.push(d.id)
-            return "10px"
-          }
-          else
-          {
-            return "0.5px"
-          }
-        })*/
-      console.log(c)
     }
 
     function identifica_e_colora_quelli_sopra() {
-	    // $(".foreground").find(".forepath").each(function(){
-      //   if($(this).attr("style") == "") {
-      //     var id_path = $(this).attr("id");
-      //     $(".dot #"+id_path).style({
-      //       "stroke-width":"5px",
-      //       "fill":"yellow"
-      //     });
-      //   }
-      // });
+      reset_dot();
       var selected_lines = [];
       var lines = document.getElementsByClassName('forepath');
       var selected_dots = [];
       var all_dots = document.getElementsByClassName('dot');
       
-      for (var i = 0, n = lines.length; i < n; i++)
-      {
-        if (lines[i].getAttribute("style") == "")
+      for (var i = 0, n = lines.length; i < n; i++){
+        if ((lines[i].getAttribute("style") == "" || lines[i].getAttribute("style") == "stroke: rgb(212, 31, 55);") && selezionato)
         {
             selected_lines.push(lines[i])
         }
       }
-      
       for (var i = 0, n = all_dots.length; i < n; i++){
-        all_dots[i].style.opacity = ".3";
         for (var j = 0, m = selected_lines.length; j < m; j++){
           if (all_dots[i].getAttribute("id") == selected_lines[j].getAttribute("id")){
             all_dots[i].style.opacity = "1";
           }
         }
       }
-      //console.log(selected_lines[0].getAttribute("id"));
     }
+
+    function reset_dot(){
+      var all_dots = document.getElementsByClassName('dot');
+      for (var i = 0, n = all_dots.length; i < n; i++){
+        all_dots[i].style.opacity = ".3";
+      }
+    }
+
+    function selezionato_sotto(id) {
+      var lines = document.getElementsByClassName('forepath');
+      for (var i = 0, n = lines.length; i < n; i++){
+        if (lines[i].getAttribute("id") == id && (lines[i].getAttribute("style") == "stroke: none;" || lines[i].getAttribute("style") == "" || lines[i].getAttribute("style") == "stroke: rgb(212, 31, 55);") && selezionato){
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function populateTable(){
+      var tbodyRef = document.getElementById('table').getElementsByTagName('tbody')[0];
+
+      function addCell(tr, text) {
+        var td = tr.insertCell();
+        td.textContent = text;
+        return td;
+      }
+
+      var all_dots = document.getElementsByClassName('dot');
+      var highlighted = [];
+
+      for (var i = 0, n = all_dots.length; i < n; i++){
+        if (all_dots[i].getAttribute("style") == "fill: rgb(31, 119, 180); opacity: 1;" || all_dots[i].getAttribute("style") == "fill: rgb(255, 127, 14); opacity: 1;"){
+          highlighted.push(all_dots[i]);
+        }
+      }
+      
+      let data = d3.selectAll(".dot").data();
+      
+      
+      // insert data
+      data.forEach(function (item) {
+        for (var j = 0, m = highlighted.length; j < m; j++){
+          if (highlighted[j].getAttribute("id") == item.id){
+            var row = table.insertRow();
+            addCell(row, item["Age "]);
+            addCell(row, item["Sex "]);
+            // addCell(row, "item.topAmount.toFixed(2)");
+          }
+          
+        }
+          // var row = table.insertRow();
+          // addCell(row, "item.category");
+          // addCell(row, "item.topMonthStr");
+          // addCell(row, "item.topAmount.toFixed(2)");
+      });
+
+    }
+
+    function resetTable() {
+      var Table = document.getElementById("table");
+      Table.innerHTML = "<thead><tr><th>Age</th><th>Sex</th><th>Angina</th></tr></thead>";
+    }
+
+  
 
   </script>
 </body>
