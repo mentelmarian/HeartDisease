@@ -47,7 +47,7 @@ table{
 
 table th {
   text-align: left;
-  background-color: #d41f37;
+  background-color: #d41f37d5;
   color: #000;
   padding: 4px 30px 4px 8px;
 }
@@ -57,24 +57,45 @@ table td {
   padding: 4px 8px;
 }
 
-table tr:nth-child(even) td{
-  background-color: #d41f37c2;
+table tr:nth-child(odd) td{
+  background-color: #d41f3748;
+}
+
+#rectangle{
+  width:110px;
+  height:40px;
+  position: relative;
+  left: 60px;
+  top: 20px;
+  border:1px solid #000;
+  box-shadow: 4px 4px #888888;
 }
 
 </style>
 </head>
 <body>
-  <div id="scatterArea"></div>
+  <div id="scatter" style="display: grid;">
+    <div id="rectangle" style="grid-column: 1; grid-row: 1; z-index: -1;"></div>
+    <div id="scatterArea" style="grid-column: 1; grid-row: 1;"></div>
+  </div>
   <div id="parallelArea"></div>
-  <button type="button" onclick=populateTable()>Click Me!</button>
-  <button type="button" onclick=resetTable()>Reset!</button>
   <div class='tableArea'>
     <table id="table">
       <thead>
         <tr>
+          <th>Id</th>
           <th>Age</th>
           <th>Sex</th>
-          <th>Angina</th>
+          <th>Chest Pain Type</th>
+          <th>Resting BP</th>
+          <th>Cholesterol</th>
+          <th>Fasting BS</th>
+          <th>Resting ECG</th>
+          <th>Max HR</th>
+          <th>Exercise Angina</th>
+          <th>Oldpeak</th>
+          <th>ST Slope</th>
+          <th>Heart Disease</th>
         </tr>
       </thead>
       <tbody>
@@ -91,8 +112,8 @@ table tr:nth-child(even) td{
     var dataSelection=[];
 
     var margin = {top: 20, right: 20, bottom: 110, left: 50},
-      margin2 = {top: 430, right: 20, bottom: 30, left: 40},
-      width = 960 - margin.left - margin.right,
+      margin2 = {top: 430, right: 20, bottom: 30, left: 50},
+      width = window.innerWidth/2 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom,
       height2 = 500 - margin2.top - margin2.bottom;
 
@@ -121,6 +142,10 @@ table tr:nth-child(even) td{
 
     var color= d3.scaleOrdinal(d3.schemeCategory10);
 
+    var clicked_disease = false;
+    var clicked_healthy = false;
+
+    
     
     /////////////////////////////////////////// START SCATTER  ///////////////////////////////////////////
 
@@ -128,6 +153,8 @@ table tr:nth-child(even) td{
       var svg = d3.select("#scatterArea").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
+
+        
 
       svg.append("defs").append("clipPath")
         .attr("id", "clip")
@@ -218,6 +245,44 @@ table tr:nth-child(even) td{
         .call(brush)
         .call(brush.move, x.range());
 
+      
+      var legend = svg.selectAll(".legend")
+        .data(["Heart Disease", "Healthy"])//hard coding the labels as the datset may have or may not have but legend should be complete.
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+      // draw legend colored circles
+      legend.append("circle")
+          .attr("cx", margin.left + 25)
+          .attr("cy",30)
+          .attr("r", 6)
+          .style("fill", function(d){ 
+            if (d == "Healthy"){
+              return "rgb(31, 119, 180)";
+            };
+            return "rgb(255, 127, 14)";
+          })
+          .on("click", function(e){         // function to highlight when clicking on the legend
+            if (e == "Heart Disease"){
+              clicked_disease ? clicked_disease = false : clicked_disease = true;
+              clicked_disease ? colorFromLegend("highlight disease") : colorFromLegend("undo disease");
+            }
+            else{
+              clicked_healthy ? clicked_healthy = false : clicked_healthy = true;
+              clicked_healthy ? colorFromLegend("highlight healthy") : colorFromLegend("undo healthy");
+            }
+          });
+          
+
+      // draw legend text
+      legend.append("text")
+          .attr("x", margin.left + 35)
+          .attr("y", 30)
+          .attr("dy", ".35em")
+          .text(function(d) { return d;});
+          
+      
     }
 
     /////////////////////////////////////////// END SCATTER  ///////////////////////////////////////////
@@ -226,9 +291,9 @@ table tr:nth-child(even) td{
 
     function drawParallel(data){
 
-      var margin = {top: 30, right: 10, bottom: 10, left: 10},
-      width = 1400 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+      var margin = {top: 50, right: 40, bottom: 80, left: 40},
+      width = window.innerWidth - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
       var x = d3.scaleBand().rangeRound([0, width+100]).padding(.1),
       y = {},
@@ -425,8 +490,8 @@ table tr:nth-child(even) td{
           
         selezionato = true;
         reset_dot();                          // what to do after a selection
-        identifica_e_colora_quelli_sopra(); 
         resetTable();
+        identifica_e_colora_quelli_sopra(); 
         populateTable();   
         for(var i=0;i<dimensions.length;++i){
           if(d3.event.target==y[dimensions[i]].brush) {
@@ -501,7 +566,6 @@ table tr:nth-child(even) td{
           .style("opacity",function(d){
           if ((x(d[chiavi[0]]) > selection[0][0]) && (x(d[chiavi[0]]) < selection[1][0]) && (y(d[chiavi[1]]) > selection[0][1]) && (y(d[chiavi[1]]) < selection[1][1])) {
             dataSelection.push(d.id)
-            //console.log(d.id)
             return "1"
           }
           else
@@ -520,7 +584,6 @@ table tr:nth-child(even) td{
         console.log("reset");
         resetTable();
         identifica_e_colora_quelli_sopra();
-        
       }
       
       //modify parallel according to selection on scatter
@@ -602,33 +665,176 @@ table tr:nth-child(even) td{
       }
       
       let data = d3.selectAll(".dot").data();
-      
+      console.log(data[0]);
       
       // insert data
       data.forEach(function (item) {
         for (var j = 0, m = highlighted.length; j < m; j++){
           if (highlighted[j].getAttribute("id") == item.id){
             var row = table.insertRow();
+            addCell(row, item.id);
             addCell(row, item["Age "]);
-            addCell(row, item["Sex "]);
-            // addCell(row, "item.topAmount.toFixed(2)");
+            addCell(row, item["Sex "] == 1 ? "Male" : "Female");
+            var chest_pain_type;
+            if(item["ChestPainType "] == 0){ chest_pain_type = "TA";}
+            else if (item["ChestPainType "] == 1){chest_pain_type = "ATA";}
+            else if (item["ChestPainType "] == 2){ chest_pain_type = "NAP";}
+            else {chest_pain_type = "ASY";}
+            addCell(row, chest_pain_type);
+            addCell(row, item["RestingBP "]);
+            addCell(row, item["Cholesterol "] == 0 ? "Not available" : item["Cholesterol "]);
+            addCell(row, item["FastingBS "] == 1 ? "> 120 mg/dl" : "< 120 mg/dl");
+            var resting;
+            if(item["RestingECG "] == 0){ resting = "Normal";}
+            else if (item["RestingECG "] == 1){resting = "ST";}
+            else { resting = "LVH";}
+            addCell(row, resting);
+            addCell(row, item["MaxHR	 "]);
+            addCell(row, item["ExerciseAngina "] == 1 ? "Yes" : "No");
+            addCell(row, item["Oldpeak "]);
+            var slope;
+            if(item["ST_Slope "] == 0){ slope = "Down";}
+            else if (item["ST_Slope "] == 1){slope = "Flat";}
+            else { slope = "Up";}
+            addCell(row, slope);
+            addCell(row, item.HeartDisease == 1 ? "Heart Disease" : "No");
           }
           
         }
-          // var row = table.insertRow();
-          // addCell(row, "item.category");
-          // addCell(row, "item.topMonthStr");
-          // addCell(row, "item.topAmount.toFixed(2)");
       });
 
     }
 
     function resetTable() {
       var Table = document.getElementById("table");
-      Table.innerHTML = "<thead><tr><th>Age</th><th>Sex</th><th>Angina</th></tr></thead>";
+      Table.innerHTML = "<thead><tr><th>Id</th>" +
+          "<th>Age</th>"+
+          "<th>Sex</th>"+
+          "<th>Chest Pain Type</th>"+
+          "<th>Resting BP</th>"+
+          "<th>Cholesterol</th>"+
+          "<th>Fasting BS</th>"+
+          "<th>Resting ECG</th>"+
+          "<th>Max HR</th>"+
+          "<th>Exercise Angina</th>"+
+          "<th>Oldpeak</th>"+
+          "<th>ST Slope</th>"+
+          "<th>Heart Disease</th></tr></thead>";
     }
 
-  
+    function colorFromLegend(option){
+      var all_dots = document.getElementsByClassName('dot');
+      var lines = document.getElementsByClassName('forepath');
+      var selected = [];
 
+      if (option == "highlight disease"){
+        for (var i = 0, n = all_dots.length; i < n; i++){
+          if (all_dots[i].getAttribute("style") == "fill: rgb(255, 127, 14);" || all_dots[i].getAttribute("style") == "fill: rgb(255, 127, 14); opacity: 0.3;"){
+            all_dots[i].style.opacity = "1";
+            selected.push(all_dots[i].id);
+          }
+        }
+        if (clicked_healthy){
+          for (var i = 0, n = lines.length; i < n; i++){
+            lines[i].style.stroke = "#d41f37";
+          }
+          resetTable();
+          populateTable(); 
+        } else{
+          for (var i = 0, n = lines.length; i < n; i++){
+            lines[i].style.stroke = "none";
+          }
+          for (var i = 0, n = lines.length; i < n; i++){
+            console.log(lines[i].id);
+            for (var j = 0, m = selected.length; j < m; j++){
+              if (lines[i].id == selected[j]){
+                lines[i].style.stroke = "#d41f37";
+              }
+            }
+          }
+          resetTable();
+          populateTable();
+        }    
+      } else if (option == "undo disease"){
+          for (var i = 0, n = all_dots.length; i < n; i++){
+            if (all_dots[i].getAttribute("style") == "fill: rgb(255, 127, 14); opacity: 1;"){
+              all_dots[i].style.opacity = "0.3";
+              selected.push(all_dots[i].id);
+            }
+          }
+          if (!clicked_healthy){
+            for (var i = 0, n = lines.length; i < n; i++){
+              lines[i].style.stroke = "#d41f37";
+            }
+            resetTable();
+          }
+          else{
+            for (var i = 0, n = lines.length; i < n; i++){
+              console.log(lines[i].id);
+              for (var j = 0, m = selected.length; j < m; j++){
+                if (lines[i].id == selected[j]){
+                  lines[i].style.stroke = "none";
+                }
+              }
+            }
+            resetTable();
+            populateTable();
+          }        
+      } else if (option == "highlight healthy"){
+          for (var i = 0, n = all_dots.length; i < n; i++){
+            if (all_dots[i].getAttribute("style") == "fill: rgb(31, 119, 180);" || all_dots[i].getAttribute("style") == "fill: rgb(31, 119, 180); opacity: 0.3;"){
+              all_dots[i].style.opacity = "1";
+              selected.push(all_dots[i].id);
+            }
+          }
+          if (clicked_disease){
+            for (var i = 0, n = lines.length; i < n; i++){
+              lines[i].style.stroke = "#d41f37";
+            } 
+            resetTable();
+            populateTable();
+          } else{
+            for (var i = 0, n = lines.length; i < n; i++){
+              lines[i].style.stroke = "none";
+            }
+            for (var i = 0, n = lines.length; i < n; i++){
+              console.log(lines[i].id);
+              for (var j = 0, m = selected.length; j < m; j++){
+                if (lines[i].id == selected[j]){
+                  lines[i].style.stroke = "#d41f37";
+                }
+              }
+            }
+            resetTable();
+            populateTable();
+          } 
+        } else {
+        for (var i = 0, n = all_dots.length; i < n; i++){
+          if (all_dots[i].getAttribute("style") == "fill: rgb(31, 119, 180); opacity: 1;"){
+            all_dots[i].style.opacity = "0.3";
+            selected.push(all_dots[i].id);
+          }
+        }
+        if (!clicked_disease){
+            for (var i = 0, n = lines.length; i < n; i++){
+              lines[i].style.stroke = "#d41f37";
+            }
+            resetTable();
+          }
+          else{
+            for (var i = 0, n = lines.length; i < n; i++){
+              console.log(lines[i].id);
+              for (var j = 0, m = selected.length; j < m; j++){
+                if (lines[i].id == selected[j]){
+                  lines[i].style.stroke = "none";
+                }
+              }
+            }
+            resetTable();
+            populateTable();
+          } 
+      }
+    }
+    
   </script>
 </body>
