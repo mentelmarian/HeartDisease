@@ -28,7 +28,7 @@ def generateFile(label,Y,dataFile):
 att=['Age','Sex','ChestPainType','RestingBP','Cholesterol','FastingBS',
      'RestingECG','MaxHR	','ExerciseAngina','Oldpeak','ST_Slope','HeartDisease']
 
-d=np.genfromtxt('heart.csv',skip_header=0,usecols=[i for i in range(0,12)],delimiter=',') 
+d=np.genfromtxt('heart_modified_nonames.csv',skip_header=0,usecols=[i for i in range(0,12)],delimiter=',') 
 #normalize the data with StandardScaler
 d_std = preprocessing.StandardScaler().fit_transform(d)
 #compute PCA
@@ -37,7 +37,7 @@ d_pca=pca.fit_transform(d_std)
 #d_pca is a numpy array with transformed data and pca is a
 # PCA variable  with useful attributes (e.g., explained_variance_)
 
-generateFile(att,d_pca,'heart.csv')
+generateFile(att,d_pca,'heart_modified_nonames.csv')
 
 
 
