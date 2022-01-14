@@ -131,10 +131,10 @@ print('\n')
 numerical1= df.select_dtypes('number').columns
 
 
-#matrix = np.triu(df[numerical1].corr())
-#fig, ax = plt.subplots(figsize=(14,10)) 
-#sns.heatmap (df[numerical1].corr(), annot=True, fmt= '.2f', vmin=-1, vmax=1, center=0, cmap='coolwarm',mask=matrix, ax=ax);
-#print('\n')
+matrix = np.triu(df[numerical1].corr())
+fig, ax = plt.subplots(figsize=(14,10)) 
+sns.heatmap (df[numerical1].corr(), annot=True, fmt= '.2f', vmin=-1, vmax=1, center=0, cmap='coolwarm',mask=matrix, ax=ax);
+print('\n')
 
 
 print(df[categorical].head())
@@ -420,6 +420,30 @@ model = CatBoostClassifier(verbose=False,random_state=0,
 
 model.fit(X_train, y_train,cat_features=categorical_features_indices,eval_set=(X_test, y_test))
 y_pred = model.predict(X_test)
+
+dati_miei = {
+'Age'  :               [48],
+'Sex'   :                 ['F'],
+'ChestPainType':        ['ASY'],
+'RestingBP'    :        [138],
+'Cholesterol'   :       [214],
+'FastingBS'     :         [0],
+'RestingECG'  :      ['Normal'],
+'MaxHR'     :           [108],
+'ExerciseAngina' :        ['Y'],
+'Oldpeak'    :            [1.5],
+'ST_Slope'   :         ['Flat']
+}
+ddff= pd.DataFrame(dati_miei)
+yy_pred = model.predict(ddff)
+yyy_pred = model.predict_proba(ddff)
+print("prediction ")
+print(y_pred)
+print(yy_pred)
+print(yyy_pred)
+#print(X_test.iloc[1])
+#print(ddff.iloc[0])
+
 accuracy.append(round(accuracy_score(y_test, y_pred),4))
 print(classification_report(y_test, y_pred))
 
