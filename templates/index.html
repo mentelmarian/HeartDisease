@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/style.css">  
+    <title>Heart Failure Prediction</title>
+
+    <style type="text/css">
+
+        .text{
+            color:{{color_choice}};
+        }
+        
+    </style>
+  </head>
+  
+  <body>
+    
+<div class="container main">
+  <div class="jumbotron" id="holder">
+     <br>
+  <center><b><h2 class="text";>{{prediction_text}}</h2></b></center> 
+     <br>
+     <br>
+    <center><h1 class='main_heading'> Heart Failure Prediction Model</h1></center>
+    <p>This Web Based Application is based on a Machine Learning Algorithm that predicts a patient's chance of having a heart failure or not. [Note that this model is 90% accurate]</p>
+    <br>
+    <div class="instructions">
+      <h2>Instructions: </h2>
+      <p>1. Please Enter values for the following fields</p>
+      <p>2. click predict </p>
+    </div>
+
+    <form class="form-horizontal" action="{{ url_for('predict')}}"method="post">
+
+      <div class="form-group">
+        <div class="col-sm-10">
+          <input  class="form-control" type= "text" name="Age" placeholder="Age" required="required" />
+        </div>
+      </div>
+     
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="Sex" required="required">
+                <option value="" selected>Sex:</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="ChestPainType" required="required">
+                <option value="" selected>Chest pain type:</option>
+                <option value="TA">Typical angina</option>
+                <option value="ATA">Atypical angina</option>
+                <option value="NAP">Non-anginal pain</option>
+                <option value="ASY">Asymptomatic</option>
+              </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="col-sm-10">
+          <input  class="form-control" type="text" name="RestingBP" placeholder="RestingBP" required="required" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+          <input  class="form-control" type= "text" name="Cholesterol" placeholder="Cholesterol" required="required" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="FastingBS" required="required">
+                <option value="" selected>Fasting blood sugar:</option>
+                <option value="0">≤120 mg/dl</option>
+                <option value="1">>120 mg/dl</option>
+              </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="RestingECG" required="required">
+                <option value="" selected>Resting ECG:</option>
+                <option value="Normal">Normal</option>
+                <option value="ST">ST</option>
+                <option value="LVH">LVH</option>
+              </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+          <input  class="form-control" type= "text" name="MaxHR" placeholder="MaxHR" required="required" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="ExerciseAngina" required="required">
+                <option value="" selected>Exercise angina:</option>
+                <option value="N">No</option>
+                <option value="Y">Yes</option>
+              </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+          <input  class="form-control" type= "text" name="Oldpeak" placeholder="Oldpeak" required="required" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-10">
+            <select name="ST_Slope" required="required">
+                <option value="" selected>ST slope:</option>
+                <option value="Up">Up</option>
+                <option value="Flat">Flat</option>
+                <option value="Down">Down</option>
+              </select>
+        </div>
+      </div>
+
+ 
+      
+      
+      <div class="form-group">
+        <div class="col-sm-10">
+         <center><button type="submit" class="button btn btn-default">PREDICT</button><center/>
+        </div>
+      </div>
+    </form>
+
+    
+
+    <h2 class="result"></h2>
+  </div>
+  </div>
+
+  </body>
+</html>
+    

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+<link type="text/css" rel="stylesheet" href="css & js/style.css"/>
+</head>
+
+<body>
+
+  <div id="scatter" style="display: grid;">
+    <div id="rectangle" style="grid-column: 1; grid-row: 1; z-index: -1;"></div>
+    <div id="scatterArea" style="grid-column: 1; grid-row: 1; width: fit-content;"></div>
+    <div id="description" style="grid-column: 2; grid-row: 1; width: 700px;">
+      <h1>Description</h1>
+      <p>These are two interactive representations: 
+        the one on the left is a scatter plot, while the one below is based on parallel coordinates.</p>
+      <p>On both it is possible to select specific data and see relative details on the table at the bottom of this page.</p>
+      <p>Moreover in the scatter plot graph it is possible to highlight all dots of a specific category by clicking on the corresponding one on the legend.</p>
+      <p>You can also perform a cross selection on both representations.</p>
+      <p>To reset graphs after a selection, just double click into their areas.</p>
+      <p>It is also possible to obtain a heart failure prediction by clicking <a href="http://127.0.0.1:5000/" target="_blank">here</a>.</p>
+    </div>
+  </div>
+
+  <div id="parallelArea"></div>
+
+  <div class='tableArea'>
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Age</th>
+          <th>Sex</th>
+          <th>Chest Pain Type</th>
+          <th>Resting BP</th>
+          <th>Cholesterol</th>
+          <th>Fasting BS</th>
+          <th>Resting ECG</th>
+          <th>Max HR</th>
+          <th>Exercise Angina</th>
+          <th>Oldpeak</th>
+          <th>ST Slope</th>
+          <th>Heart Disease</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>  
+    </table>
+  </div>
+
+  <script src="css & js/d3.js"></script>
+  <script type="text/javascript" src="css & js/script.js"></script>
+
+</body>
