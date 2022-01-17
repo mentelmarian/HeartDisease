@@ -21,5 +21,5 @@ HOW TO USE THIS PROJECT:
 For the machine learning part:
 
 1. Run a terminal in the folder
-2. type "python3 server.py" (you should also import all the necessary libraries)
+2. type "python3 server.py" (you should also install all the necessary libraries)
 3. Now it's possible to access the prediction page from the "visualization.html"
