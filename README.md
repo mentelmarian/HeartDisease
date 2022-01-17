@@ -15,3 +15,11 @@ People with cardiovascular disease or who are at high cardiovascular risk (due t
 As we said before, among all the available datasets on the web site we choose the one dealing with the “Heart Disease” (https://archive.ics.uci.edu/ml/datasets/heart+disease).
 
 The dataset contains 918 records with 12 attributes, selected by all published experiments over the 76 initial ones. 
+
+After observing the dataset we thought about the creation of the visual representation oriented to medics. 
+More specifically we made an .html file which will display the elaborated data in 3 different ways, such that the medic can observe specific behaviors and study them. Those 3 interactive representation are: a scatter plot, a parallel coordinates graph and a table which will display the info of the selected dots or lines in the graphs. 
+
+Moreover it is also possible to use a machine learning python code based on the CatBoost classifier to predict the probability of a person to suffer in the future from an heart disease.
+
+HOW TO USE THIS PROJECT:
+
