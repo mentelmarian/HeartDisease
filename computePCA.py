@@ -54,9 +54,9 @@ plt.show()
 
 s = 30
 plt.scatter(d_pca[0:410, 0], d_pca[0:410, 1],
-            color='red',s=s, lw=0, label='Normal')
+            color='#67a9cf',s=s, lw=0, label='Normal')
 plt.scatter(d_pca[410:918, 0], d_pca[410:918, 1],
-            color='blue',s=s, lw=0, label='Heart Disease')
+            color='#ef8a62',s=s, lw=0, label='Heart Disease')
 
 plt.xlabel('Y1')
 plt.ylabel('Y2')

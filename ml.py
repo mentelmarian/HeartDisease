@@ -106,7 +106,7 @@ print('\n')
 y = df['HeartDisease']
 print(f'Percentage of patients that had a HeartDisease:  {round(y.value_counts(normalize=True)[1]*100,2)} %  --> ({y.value_counts()[1]} patients)\nPercentage of patients that did not have a HeartDisease: {round(y.value_counts(normalize=True)[0]*100,2)}  %  --> ({y.value_counts()[0]} patients)')
 print('\n')
-fig = px.histogram(df, x="HeartDisease")
+fig = px.histogram(df, x="HeartDisease", title="Distribution for the numerical attributes", height=500)
 fig.show()
 print('\n')
 print(df[numerical].describe())

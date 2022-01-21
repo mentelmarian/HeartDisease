@@ -14,17 +14,65 @@
 
         .text{
             color:{{color_choice}};
+            text-shadow:
+              -0.8px -0.8px 0 #000,
+              0.85px -0.85px 0 #000,
+              -0.85px 0.85px 0 #000,
+              0.85px 0.85px 0 #000;
+        }
+
+        h1{
+          font-family: "Lucida Console", "Courier New", monospace;
+          font-size: 50px;
+        }
+
+        p{
+          font-family: "Lucida Console", "Courier New", monospace;
+          font-size: 20px;
+        }
+
+        h2{
+          font-family: "Lucida Console", "Courier New", monospace;
+          font-size: 30px;
         }
         
+        label, input, select, option{
+          font-family: "Lucida Console", "Courier New", monospace;
+          font-size: 15px;
+        }
+
+        .form-group, select, .form-control{
+          width: 300px;
+        }
+
+        select{
+          height: 34px;
+        }
+
+        .grid-container{
+          display: grid;
+          grid-template-columns: auto auto auto;
+        }
+
+        button{
+          height: 60px;
+          width: 150px;
+          font-family: "Lucida Console", "Courier New", monospace;
+        }
+
+        body{
+          background-image: url("{{ url_for('static', filename='60_.jpg') }}"); 
+          background-repeat: no-repeat; 
+          background-size: 100% 120%;
+        }
     </style>
   </head>
   
   <body>
-    
 <div class="container main">
-  <div class="jumbotron" id="holder">
+  <div  id="holder">
      <br>
-  <center><b><h2 class="text";>{{prediction_text}}</h2></b></center> 
+  <center><b><h2 class="text" style="font-size: 50px;">{{prediction_text}}</h2></b></center> 
      <br>
      <br>
     <center><h1 class='main_heading'> Heart Failure Prediction Model</h1></center>
@@ -35,18 +83,22 @@
       <p>1. Please Enter values for the following fields</p>
       <p>2. click predict </p>
     </div>
+    <br>
 
     <form class="form-horizontal" action="{{ url_for('predict')}}"method="post">
 
+      <div class="grid-container">
       <div class="form-group">
         <div class="col-sm-10">
-          <input  class="form-control" type= "text" name="Age" placeholder="Age" required="required" />
+          <label for="fage">Age:</label><br>
+          <input  class="form-control" id="fage" type= "text" name="Age" placeholder="Age" required="required" />
         </div>
       </div>
      
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="Sex" required="required">
+          <label for="fs">Sex:</label><br>
+            <select name="Sex" id="fs" required="required">
                 <option value="" selected>Sex:</option>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
@@ -56,7 +108,8 @@
 
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="ChestPainType" required="required">
+            <label for="fcpt">Chest Pain Type:</label><br>
+            <select name="ChestPainType" id="fcpt" required="required">
                 <option value="" selected>Chest pain type:</option>
                 <option value="TA">Typical angina</option>
                 <option value="ATA">Atypical angina</option>
@@ -68,19 +121,22 @@
       
       <div class="form-group">
         <div class="col-sm-10">
-          <input  class="form-control" type="text" name="RestingBP" placeholder="RestingBP" required="required" />
+          <label for="frbp">Resting BP:</label><br>
+          <input  class="form-control" id="frbp" type="text" name="RestingBP" placeholder="RestingBP" required="required" />
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-10">
-          <input  class="form-control" type= "text" name="Cholesterol" placeholder="Cholesterol" required="required" />
+          <label for="fchol">Cholesterol:</label><br>
+          <input  class="form-control" id="fchol" type= "text" name="Cholesterol" placeholder="Cholesterol" required="required" />
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="FastingBS" required="required">
+          <label for="ffbs">Fasting blood sugar:</label><br>
+            <select name="FastingBS" id="ffbs" required="required">
                 <option value="" selected>Fasting blood sugar:</option>
                 <option value="0">≤120 mg/dl</option>
                 <option value="1">>120 mg/dl</option>
@@ -90,7 +146,8 @@
 
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="RestingECG" required="required">
+          <label for="frecg">Resting ECG:</label><br>
+            <select name="RestingECG" id="frecg" required="required">
                 <option value="" selected>Resting ECG:</option>
                 <option value="Normal">Normal</option>
                 <option value="ST">ST</option>
@@ -101,13 +158,15 @@
 
       <div class="form-group">
         <div class="col-sm-10">
-          <input  class="form-control" type= "text" name="MaxHR" placeholder="MaxHR" required="required" />
+          <label for="fmhr">Max HR:</label><br>
+          <input  class="form-control" id="fmhr" type= "text" name="MaxHR" placeholder="MaxHR" required="required" />
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="ExerciseAngina" required="required">
+          <label for="fea">Exercise Angina:</label><br>
+            <select name="ExerciseAngina" id="fea" required="required">
                 <option value="" selected>Exercise angina:</option>
                 <option value="N">No</option>
                 <option value="Y">Yes</option>
@@ -117,13 +176,15 @@
 
       <div class="form-group">
         <div class="col-sm-10">
-          <input  class="form-control" type= "text" name="Oldpeak" placeholder="Oldpeak" required="required" />
+          <label for="fo">Oldpeak:</label><br>
+          <input  class="form-control" id="fo" type= "text" name="Oldpeak" placeholder="Oldpeak" required="required" />
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-10">
-            <select name="ST_Slope" required="required">
+          <label for="fsts">ST Slope:</label><br>
+            <select name="ST_Slope" id="fsts" required="required">
                 <option value="" selected>ST slope:</option>
                 <option value="Up">Up</option>
                 <option value="Flat">Flat</option>
@@ -131,15 +192,17 @@
               </select>
         </div>
       </div>
-
+    </div>
  
+      <br>
       
-      
-      <div class="form-group">
-        <div class="col-sm-10">
-         <center><button type="submit" class="button btn btn-default">PREDICT</button><center/>
+      <center>
+       <div class="form-group">
+          <div class="col-sm-10">
+           <center><button type="submit" style="font-size: 20px;" class="button btn btn-default">PREDICT</button><center/>
+          </div>
         </div>
-      </div>
+      </center> 
     </form>
 
     
